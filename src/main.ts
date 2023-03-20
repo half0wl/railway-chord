@@ -15,7 +15,7 @@ const RAILWAY_API_WS_ENDPOINT = getEnv(
   'RAILWAY_API_WS_ENDPOINT',
   'wss://backboard.railway.app/graphql/v2',
 )
-const PROJECT_IDS = requireEnv('PROJECT_IDS')
+const RAILWAY_PROJECT_IDS = requireEnv('RAILWAY_PROJECT_IDS')
 const RAILWAY_API_TOKEN = requireEnv('RAILWAY_API_TOKEN')
 const VECTOR_BIN_PATH = requireEnv('VECTOR_BIN_PATH')
 const VECTOR_CFG_PATH = requireEnv('VECTOR_CFG_PATH')
@@ -39,7 +39,7 @@ const main = async () => {
     `⚙️  Using Railway WebSockets endpoint: ${RAILWAY_API_WS_ENDPOINT}`,
   )
 
-  const projectIds = parseProjectIds(PROJECT_IDS)
+  const projectIds = parseProjectIds(RAILWAY_PROJECT_IDS)
 
   const httpClient = createHttpClient(
     RAILWAY_API_HTTP_ENDPOINT,
