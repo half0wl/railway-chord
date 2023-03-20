@@ -1,0 +1,19 @@
+# This is an allowlist that only allows directories and files specified in
+# here to make it into the Docker image. Everything else is ignored by default.
+**
+
+# Allow
+!src/**
+!Dockerfile
+!package.json
+!tsconfig.json
+!yarn.lock
+!vector.toml
+
+# Filter any unnecessary files that might be inside whitelisted directories
+**/*~
+**/*.log
+**/*.csv
+**/*.md
+**/*.sqlite3
+**/.DS_Store

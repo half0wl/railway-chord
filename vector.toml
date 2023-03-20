@@ -1,0 +1,24 @@
+[sources.in]
+type = "stdin"
+
+[sinks.out]
+inputs = ["in"]
+type = "console"
+encoding.codec = "text"
+
+[transforms.logtail_transform]
+type = "remap"
+inputs = [ "*" ]
+source = '''
+.dt = del(.timestamp)
+.railway = del(.railway)
+'''
+
+[sinks.logtail_sink]
+type = "http"
+method = "post"
+inputs = [ "logtail_transform" ]
+uri = "https://in.logtail.com/"
+encoding.codec = "json"
+auth.strategy = "bearer"
+auth.token = "${LOGTAIL_TOKEN}"
