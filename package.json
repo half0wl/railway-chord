@@ -6,13 +6,15 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "run-dev": "ts-node src/main.ts",
+    "run-dev": "ts-node -r tsconfig-paths/register src/main.ts",
     "build": "tsc --build --verbose"
   },
   "devDependencies": {
     "@types/node": "^18.15.3",
+    "@types/tmp": "^0.2.3",
     "@types/ws": "^8.5.4",
     "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.1.2",
     "typescript": "^5.0.2"
   },
   "dependencies": {
@@ -20,6 +22,8 @@
     "dotenv": "^16.0.3",
     "graphql": "^16.6.0",
     "graphql-ws": "^5.12.0",
+    "tmp": "^0.2.1",
+    "ts-pattern": "^4.2.1",
     "ws": "^8.13.0"
   }
 }

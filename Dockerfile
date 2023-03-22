@@ -21,7 +21,5 @@ WORKDIR /app
 COPY --chown=runner:runner --from=base /root/.vector ./vector
 COPY --chown=runner:runner --from=build /build/node_modules ./node_modules
 COPY --chown=runner:runner --from=build /build/dist ./dist
-COPY --chown=runner:runner vector.toml ./vector.toml
 ENV VECTOR_BIN_PATH=/app/vector/bin/vector
-ENV VECTOR_CFG_PATH=/app/vector.toml
 ENTRYPOINT ["node", "dist/main.js"]

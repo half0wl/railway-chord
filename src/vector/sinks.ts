@@ -1,11 +1,10 @@
-[sources.in]
-type = "stdin"
-
+const STDOUT = `
 [sinks.out]
-inputs = ["in"]
+inputs = ["*"]
 type = "console"
-encoding.codec = "text"
+encoding.codec = "text"`
 
+const LOGTAIL = (token: string) => `
 [transforms.logtail_transform]
 type = "remap"
 inputs = [ "*" ]
@@ -21,4 +20,6 @@ inputs = [ "logtail_transform" ]
 uri = "https://in.logtail.com/"
 encoding.codec = "json"
 auth.strategy = "bearer"
-auth.token = "${LOGTAIL_TOKEN}"
+auth.token = "${token}"`
+
+export { STDOUT, LOGTAIL }
