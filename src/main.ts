@@ -70,19 +70,15 @@ const main = async () => {
   // network requests to Railway API if Vector can't start.
   console.info(`⚙️  Using Vector binary: ${VECTOR_BIN_PATH}`)
   const vector = spawn(VECTOR_BIN_PATH, vectorCfg.contents)
-
   write(vector, '>>> ping from railway-chord')
   console.info(`✅ Vector started`)
-
   console.info(`✅ Enabled sinks:`)
   vectorCfg.enabled.forEach((s) => {
     console.info(`     - ${s}`)
   })
 
   console.info(`⚙️  Using Railway HTTP endpoint: ${RAILWAY_API_HTTP_ENDPOINT}`)
-  console.info(
-    `⚙️  Using Railway WebSockets endpoint: ${RAILWAY_API_WS_ENDPOINT}`,
-  )
+  console.info(`⚙️  Using Railway WS endpoint: ${RAILWAY_API_WS_ENDPOINT}`)
 
   const projectIds = parseProjectIds(RAILWAY_PROJECT_IDS)
   const httpClient = createHttpClient(
