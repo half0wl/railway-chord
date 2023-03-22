@@ -34,9 +34,55 @@ Railway's Dashboard -> Project -> Settings -> General.
 RAILWAY_PROJECT_IDS="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX,XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 ```
 
-## Adding log destinations (Vector sinks)
+## Adding Vector sinks
 
-(...wip)
+### Request for new sinks
+
+To request for a new Vector sink, please [open a GitHub issue](https://github.com/half0wl/railway-chord/issues/new).
+
+### Add your own sink
+
+**See this [pull request](https://github.com/half0wl/railway-chord/pull/8) for an
+example**.
+
+Before adding a new Vector sink, check the authentication mechanism of the
+provider you're using. There is usually an API key required.
+
+1. In [`src/main.ts`](src/main.ts), pass the required API key/token into
+`configureVector()`:
+
+    ```typescript
+    const PROVIDER_TOKEN = process.env.PROVIDER_TOKEN ?? null
+    const vectorCfg = configureVector(
+      ...,
+      PROVIDER_TOKEN
+    )
+    ```
+2. Create a new [Vector sink configuration](https://vector.dev/docs/reference/configuration/sinks/)
+in [`src/vector/sinks.ts`](src/vector/sinks.ts) (TOML format).
+
+    ```typescript
+    const PROVIDER = (token: string) => `
+    [sinks.PROVIDER]
+    ...
+    token = "${token}"
+    `
+    ```
+3. In [`src/vector/configure.ts`](src/vector/configure.ts), import and append
+the newly-created config created above, passing the required API key into it:
+
+    ```typescript
+    import { PROVIDER } from './sinks'
+    const configure = ( ..., providerToken: string | null ) => {
+        ...
+        if (providerToken !== null) {
+            enabled.push('provider')
+            cfg += PROVIDER(providerToken)
+        }
+        ...
+    }
+    ```
+
 
 ## Configuration
 
