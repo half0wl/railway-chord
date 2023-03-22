@@ -14,12 +14,12 @@ const ProjectQuery = gql`
           }
         }
       }
-      services {
+      environments {
         edges {
           node {
             id
             name
-            deployments {
+            deployments(first: 1) {
               edges {
                 node {
                   id
@@ -27,14 +27,6 @@ const ProjectQuery = gql`
                 }
               }
             }
-          }
-        }
-      }
-      environments {
-        edges {
-          node {
-            id
-            name
           }
         }
       }
