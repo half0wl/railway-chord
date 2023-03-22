@@ -69,6 +69,15 @@ containing the deployment/plugin ID and name.
 }
 ```
 
+### Railway API Rate Limit
+
+Railway's Public API currently has a [rate limit of 1,000 requests daily](https://docs.railway.app/reference/public-api#rate-limits). _railway-chord_ will make ~100 requests every 24 hours for each project enabled.
+Work is underway to reduce the amount of requests _railway-chord_ is making (see
+[railway-chord#3](https://github.com/half0wl/railway-chord/issues/3)).
+
+Be careful about this if you're using Railway's API for something else - _railway-chord_
+will eat into your rate limit!
+
 ## Adding Vector sinks
 
 ### Request for new sinks
