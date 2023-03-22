@@ -64,7 +64,14 @@ const main = async () => {
   // inject the Datadog sink into Vector config; and so on.
   const ENABLE_STDOUT = process.env.ENABLE_STDOUT === 'true' ? true : false
   const LOGTAIL_TOKEN = process.env.LOGTAIL_TOKEN ?? null
-  const vectorCfg = configureVector(ENABLE_STDOUT, LOGTAIL_TOKEN)
+  const DATADOG_TOKEN = process.env.DATADOG_TOKEN ?? null
+  const DATADOG_SITE = process.env.DATADOG_SITE ?? null
+  const vectorCfg = configureVector(
+    ENABLE_STDOUT,
+    LOGTAIL_TOKEN,
+    DATADOG_TOKEN,
+    DATADOG_SITE,
+  )
 
   // Start Vector first. We want to crash early; there's no point in making
   // network requests to Railway API if Vector can't start.

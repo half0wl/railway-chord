@@ -1,10 +1,12 @@
 import { VectorConfiguration } from '@/types'
-import { LOGTAIL, STDOUT } from './sinks'
+import { DATADOG, LOGTAIL, STDOUT } from './sinks'
 import { STDIN } from './sources'
 
 const configure = (
   enableStdout: boolean,
-  logtail: string | null,
+  logtailToken: string | null,
+  datadogToken: string | null,
+  datadogSite: string | null,
 ): VectorConfiguration => {
   const enabled = []
   let cfg = ''
@@ -15,9 +17,15 @@ const configure = (
     enabled.push('stdout')
     cfg += STDOUT
   }
-  if (logtail !== null) {
+  if (logtailToken !== null) {
     enabled.push('logtail')
-    cfg += LOGTAIL(logtail)
+    cfg += LOGTAIL(logtailToken)
+  }
+  if (datadogToken !== null) {
+    enabled.push('datadog')
+    cfg += datadogSite
+      ? DATADOG(datadogToken, datadogSite)
+      : DATADOG(datadogToken)
   }
 
   return {
