@@ -34,13 +34,12 @@ const getProjectData = async (
     })
   })
 
-  // Latest Deployment of each Service in the Project.
-  const deployments: App.Deployment[] = project.services.edges.flatMap((s) => {
-    return s.node.deployments.edges.map((d) => {
+  // Latest Deployment of each Service in all Environments of the Project.
+  const deployments: App.Deployment[] = project.environments.edges.flatMap((e) => {
+    return e.node.deployments.edges.map(d => {
       return {
         id: d.node.id,
         staticUrl: d.node.staticUrl,
-        serviceId: s.node.id,
       }
     })
   })

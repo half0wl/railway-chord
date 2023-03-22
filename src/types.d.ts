@@ -34,7 +34,6 @@ export namespace App {
   export interface Deployment {
     id: string
     staticUrl: string
-    serviceId: string
   }
 
   export interface State {
@@ -70,7 +69,7 @@ export namespace QueryResponse {
 
   namespace EdgeResponses {
     export interface Deployments {
-      __typename: 'ServiceDeploymentsConnection'
+      __typename: 'EnvironmentDeploymentsConnection'
       edges: Edge.Deployment[]
     }
 
@@ -82,15 +81,11 @@ export namespace QueryResponse {
       __typename: 'ProjectPluginsConnection'
       edges: Edge.Plugin[]
     }
-    export interface Services {
-      __typename: 'ProjectServicesConnection'
-      edges: Edge.Service[]
-    }
   }
 
   namespace Edge {
     export interface Deployment {
-      __typename: 'ServiceDeploymentsConnectionEdge'
+      __typename: 'EnvironmentDeploymentsConnectionEdge'
       node: Node.Deployment
     }
     export interface Environment {
@@ -100,10 +95,6 @@ export namespace QueryResponse {
     export interface Plugin {
       __typename: 'ProjectPluginsConnectionEdge'
       node: Node.Plugin
-    }
-    export interface Service {
-      __typename: 'ProjectServicesConnectionEdge'
-      node: Node.Service
     }
   }
 
@@ -118,6 +109,7 @@ export namespace QueryResponse {
       __typename: 'Environment'
       id: string
       name: string
+      deployments: EdgeResponses.Deployments
     }
 
     export interface Project {
@@ -125,7 +117,6 @@ export namespace QueryResponse {
       id: string
       name: string
       plugins: EdgeResponses.Plugins
-      services: EdgeResponses.Services
       environments: EdgeResponses.Environments
     }
 
@@ -133,13 +124,6 @@ export namespace QueryResponse {
       __typename: 'Plugin'
       id: string
       name: string
-    }
-
-    export interface Service {
-      __typename: 'Service'
-      id: string
-      name: string
-      deployments: EdgeResponses.Deployments
     }
   }
 }
