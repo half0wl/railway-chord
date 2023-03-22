@@ -1,10 +1,11 @@
-import { Client, createClient } from 'graphql-ws'
+import { WsClient } from '@/types'
+import { createClient } from 'graphql-ws'
 import WebSocket from 'ws'
 
 /**
  * Creates an authenticated GQL WebSocket client.
  */
-const createWsClient = (endpoint: string, apiToken: string): Client => {
+const createWsClient = (endpoint: string, apiToken: string): WsClient => {
   class AuthenticatedWebSocket extends WebSocket {
     constructor(address: string, protocols: string[]) {
       super(address, protocols, {

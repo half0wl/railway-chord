@@ -1,10 +1,56 @@
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
+import { ChildProcessWithoutNullStreams } from 'child_process'
+import { Client } from 'graphql-ws'
+
+export type VectorProcess = ChildProcessWithoutNullStreams
+
+export type HttpClient = ApolloClient<NormalizedCacheObject>
+
+export type WsClient = Client
+
+export interface VectorConfiguration {
+  contents: string  // This holds the actual Vector config in toml format.
+  enabled: string[]
+}
+
+export interface Deferred {
+  resolve: (done: boolean) => void
+  reject: (err: unknown) => void
+}
+
+/**
+ * Internal application state.
+ */
+export namespace App {
+  export type ProjectId = string
+
+  export interface Plugin {
+    id: string
+    name: string
+    environmentId: string
+    environmentName: string
+  }
+
+  export interface Deployment {
+    id: string
+    staticUrl: string
+    serviceId: string
+  }
+
+  export interface State {
+    projectId: ProjectId
+    plugins: Plugin[]
+    deployments: Deployment[]
+  }
+}
+
 /**
  * Response types.
  *
  * @NOTE: I'm maintaining this manually because it's only three queries. If
  * the number of queries grow, look into using GQL client codegen tools.
  */
-namespace QueryResponse {
+export namespace QueryResponse {
   export interface ProjectQueryResponse {
     project: Node.Project
   }
@@ -97,5 +143,3 @@ namespace QueryResponse {
     }
   }
 }
-
-export default QueryResponse
