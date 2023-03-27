@@ -24,6 +24,9 @@ const ProjectQuery = gql`
                 node {
                   id
                   staticUrl
+                  environment {
+                    name
+                  }
                 }
               }
             }
