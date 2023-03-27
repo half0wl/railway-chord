@@ -33,6 +33,7 @@ export namespace App {
 
   export interface Deployment {
     id: string
+    environmentName: string
     staticUrl: string
   }
 
@@ -103,6 +104,9 @@ export namespace QueryResponse {
       __typename: 'Deployment'
       id: string
       staticUrl: string
+      environment: {
+        name: string
+      }
     }
 
     export interface Environment {

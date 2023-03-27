@@ -40,6 +40,7 @@ const getProjectData = async (
       return {
         id: d.node.id,
         staticUrl: d.node.staticUrl,
+        environmentName: d.node.environment.name,
       }
     })
   })

@@ -23,7 +23,7 @@ const pushDeploymentLogs = async (
             type: 'DEPLOYMENT',
             name: deployment.staticUrl,
             id: deployment.id,
-            environment: null, // @TODO
+            environment: deployment.environmentName,
           },
           ...log,
         }
