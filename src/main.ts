@@ -56,18 +56,19 @@ import configureVector from './vector/configure'
  * [0] https://docs.railway.app/reference/public-api#rate-limits
  */
 const main = async () => {
+  const ENVIRONMENT = process.env.ENVIRONMENT ?? 'development'
   console.info(`⚡ railway-chord is starting!`)
+  console.info(`⚡ environment: ${ENVIRONMENT}`)
 
   // Vector sinks are configured dynamically based on the presence of a sink's
   // API token in env. i.e. if there's a LOGTAIL_TOKEN provided, inject the
   // Logtail sink into Vector config; if there's a DATADOG_TOKEN provided,
   // inject the Datadog sink into Vector config; and so on.
-  const ENABLE_STDOUT = process.env.ENABLE_STDOUT === 'true' ? true : false
   const LOGTAIL_TOKEN = process.env.LOGTAIL_TOKEN ?? null
   const DATADOG_TOKEN = process.env.DATADOG_TOKEN ?? null
   const DATADOG_SITE = process.env.DATADOG_SITE ?? null
   const vectorCfg = configureVector(
-    ENABLE_STDOUT,
+    ENVIRONMENT !== 'production',
     LOGTAIL_TOKEN,
     DATADOG_TOKEN,
     DATADOG_SITE,
