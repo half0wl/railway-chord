@@ -2,6 +2,9 @@ import subscribeToPluginLogs from '@/api/websocket/subscribe-to-plugin-logs'
 import { App, VectorProcess } from '@/types'
 import write from '@/vector/write'
 import { Client as GqlWsClient } from 'graphql-ws'
+import sleep from '@/utils/sleep'
+
+const RETRY_BACKOFF_MS = 3000
 
 /**
  * Opens a subscription to Railway's plugin logs API, and pushes the
@@ -47,6 +50,7 @@ const pushPluginLogs = async (
     }
   } catch (e) {
     console.error(`Retrying error in pushPluginLogs`, e)
+    await sleep(RETRY_BACKOFF_MS)
     pushPluginLogs(wsClient, vector, plugin, loopStart, maxRetries - 1)
   }
 }

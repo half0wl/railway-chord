@@ -2,6 +2,9 @@ import subscribeToDeploymentLogs from '@/api/websocket/subscribe-to-deployment-l
 import { App, VectorProcess } from '@/types'
 import write from '@/vector/write'
 import { Client as GqlWsClient } from 'graphql-ws'
+import sleep from '@/utils/sleep'
+
+const RETRY_BACKOFF_MS = 3000
 
 /**
  * Opens a subscription to Railway's deployment logs API, and pushes the
@@ -49,6 +52,7 @@ const pushDeploymentLogs = async (
     }
   } catch (e) {
     console.error(`Retrying error in pushDeploymentLogs`, e)
+    await sleep(RETRY_BACKOFF_MS)
     pushDeploymentLogs(wsClient, vector, deployment, loopStart, maxRetries - 1)
   }
 }
