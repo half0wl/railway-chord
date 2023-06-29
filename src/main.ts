@@ -3,10 +3,11 @@ import getProjectData from '@/api/http/get-project-data'
 import createWsClient from '@/api/websocket/client'
 import pushDeploymentLogs from '@/push-deployment-logs'
 import pushPluginLogs from '@/push-plugin-logs'
-import { App, HttpClient, VectorProcess, WsClient } from '@/types'
+import { App, HttpClient, WsClient, VectorProcess } from '@/types'
 import getEnv from '@/utils/get-env'
 import parseProjectIds from '@/utils/parse-project-ids'
 import requireEnv from '@/utils/require-env'
+import sleep from '@/utils/sleep'
 import spawn from '@/vector/spawn'
 import write from '@/vector/write'
 import dotenv from 'dotenv'
@@ -22,6 +23,7 @@ const RAILWAY_API_WS_ENDPOINT = getEnv(
   'wss://backboard.railway.app/graphql/v2',
 )
 
+const RETRY_DELAY_MS = 3000
 const RAILWAY_PROJECT_IDS = requireEnv('RAILWAY_PROJECT_IDS')
 const RAILWAY_API_TOKEN = requireEnv('RAILWAY_API_TOKEN')
 const VECTOR_BIN_PATH = requireEnv('VECTOR_BIN_PATH')
@@ -89,36 +91,41 @@ const main = async () => {
   console.info(`⚙️  Using Railway WS endpoint: ${RAILWAY_API_WS_ENDPOINT}`)
 
   const projectIds = parseProjectIds(RAILWAY_PROJECT_IDS)
+
+  // Start event loop
+  await start(vector, projectIds)
+}
+
+const start = async (
+  vector: VectorProcess,
+  projectIds: App.ProjectId[],
+  maxRetries = 30,
+) => {
+  if (maxRetries <= 0) {
+    console.error(`Max retry attempts exceeded, crashing!`)
+    process.exit(1)
+  }
+
   const httpClient = createHttpClient(
     RAILWAY_API_HTTP_ENDPOINT,
     RAILWAY_API_TOKEN,
   )
   const wsClient = createWsClient(RAILWAY_API_WS_ENDPOINT, RAILWAY_API_TOKEN)
 
-  // Start event loop
-  await runEventLoop(httpClient, wsClient, vector, projectIds)
-  setInterval(async () => {
-    await runEventLoop(httpClient, wsClient, vector, projectIds)
-  }, REFRESH_INTERVAL_SECONDS * 1000)
+  try {
+    await tick(httpClient, wsClient, vector, projectIds)
+    setInterval(async () => {
+      await tick(httpClient, wsClient, vector, projectIds)
+    }, REFRESH_INTERVAL_SECONDS * 1000)
+  } catch (e) {
+    console.error(`Retrying in ${RETRY_DELAY_MS}ms due to error in main`, e)
+    wsClient.terminate() // kill the current conn first to prevent staleness
+    await sleep(RETRY_DELAY_MS)
+    start(vector, projectIds, maxRetries - 1)
+  }
 }
 
-const refreshProjects = async (
-  httpClient: HttpClient,
-  projectIds: App.ProjectId[],
-) => {
-  return await Promise.all(
-    projectIds.map(async (id) => {
-      const project = await getProjectData(httpClient, id)
-      return {
-        projectId: id,
-        plugins: project.plugins,
-        deployments: project.deployments,
-      }
-    }),
-  )
-}
-
-const runEventLoop = async (
+const tick = async (
   httpClient: HttpClient,
   wsClient: WsClient,
   vector: VectorProcess,
@@ -141,6 +148,22 @@ const runEventLoop = async (
       pushPluginLogs(wsClient, vector, p, new Date())
     })
   })
+}
+
+const refreshProjects = async (
+  httpClient: HttpClient,
+  projectIds: App.ProjectId[],
+) => {
+  return await Promise.all(
+    projectIds.map(async (id) => {
+      const project = await getProjectData(httpClient, id)
+      return {
+        projectId: id,
+        plugins: project.plugins,
+        deployments: project.deployments,
+      }
+    }),
+  )
 }
 
 main()
