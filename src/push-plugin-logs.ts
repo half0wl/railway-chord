@@ -27,9 +27,10 @@ const pushPluginLogs = async (
         const out = {
           railway: {
             type: 'PLUGIN',
-            name: plugin.name,
-            id: plugin.id,
-            environment: plugin.environmentName,
+            pluginName: plugin.name,
+            pluginId: plugin.id,
+            environmentId: plugin.environmentId,
+            environmentName: plugin.environmentName,
           },
           ...log,
         }

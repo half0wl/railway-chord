@@ -66,6 +66,16 @@ export namespace QueryResponse {
   interface Log {
     timestamp: string
     message: string
+    severity: string
+    tags: LogTags
+  }
+
+  interface LogTags {
+    deploymentId: string
+    deploymentInstanceId: string
+    environmentId: string
+    projectId: string
+    serviceId: string
   }
 
   namespace EdgeResponses {
