@@ -41,8 +41,7 @@ const pushDeploymentLogs = async (
       })
     }
   } catch (e) {
-    console.error(`Retrying error in pushDeploymentLogs: ${e}`)
-    console.error((e as any).stack)
+    console.error(`Retrying error in pushDeploymentLogs`, e)
     pushDeploymentLogs(wsClient, vector, deployment, maxRetries - 1)
   }
 }

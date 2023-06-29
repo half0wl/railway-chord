@@ -38,8 +38,7 @@ const pushPluginLogs = async (
       })
     }
   } catch (e) {
-    console.error(`Retrying error in pushPluginLogs: ${e}`)
-    console.error((e as any).stack)
+    console.error(`Retrying error in pushPluginLogs`, e)
     pushPluginLogs(wsClient, vector, plugin, maxRetries - 1)
   }
 }
