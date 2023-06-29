@@ -23,14 +23,19 @@ const pushDeploymentLogs = async (
       deployment.id,
     )) {
       result.data?.deploymentLogs.forEach((log) => {
+        const tags = {
+          ...log.tags,
+          deploymentName: deployment.staticUrl,
+          environmentName: deployment.environmentName,
+        }
         const out = {
+          message: log.message,
+          severity: log.severity,
+          timestamp: log.timestamp,
           railway: {
             type: 'DEPLOYMENT',
-            name: deployment.staticUrl,
-            id: deployment.id,
-            environment: deployment.environmentName,
+            ...tags,
           },
-          ...log,
         }
         write(vector, JSON.stringify(out))
       })

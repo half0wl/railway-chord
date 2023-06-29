@@ -12,7 +12,15 @@ subscription DeploymentLogs(
 
 fragment LogFields on Log {
 	timestamp
+  severity
 	message
+  tags {
+    deploymentId
+    deploymentInstanceId
+    environmentId
+    projectId
+    serviceId
+  }
 }
 `
 
@@ -36,7 +44,15 @@ subscription PluginLogs(
 
 fragment LogFields on Log {
 	timestamp
+  severity
 	message
+  tags {
+    deploymentId
+    deploymentInstanceId
+    environmentId
+    projectId
+    serviceId
+  }
 }
 `
 
