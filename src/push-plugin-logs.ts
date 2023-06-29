@@ -11,7 +11,12 @@ const pushPluginLogs = async (
   wsClient: GqlWsClient,
   vector: VectorProcess,
   plugin: App.Plugin,
+  maxRetries = 30,
 ) => {
+  if (maxRetries <= 0) {
+    console.error(`Max retries exceeded on pushPluginLogs, crashing!`)
+    process.exit(1)
+  }
   try {
     for await (const result of subscribeToPluginLogs(
       wsClient,
@@ -32,10 +37,9 @@ const pushPluginLogs = async (
       })
     }
   } catch (e) {
-    // @TODO This needs some re-try logic. If there's a momentary API error,
-    // this will crash the service (intentional for now).
-    console.error('Error reading plugin logs', e)
-    process.exit(1)
+    console.error(`Retrying error in pushPluginLogs: ${e}`)
+    console.error((e as any).stack)
+    pushPluginLogs(wsClient, vector, plugin, maxRetries - 1)
   }
 }
 

@@ -11,7 +11,12 @@ const pushDeploymentLogs = async (
   wsClient: GqlWsClient,
   vector: VectorProcess,
   deployment: App.Deployment,
+  maxRetries = 30,
 ) => {
+  if (maxRetries <= 0) {
+    console.error(`Max retries exceeded on pushDeploymentLogs, crashing!`)
+    process.exit(1)
+  }
   try {
     for await (const result of subscribeToDeploymentLogs(
       wsClient,
@@ -31,10 +36,9 @@ const pushDeploymentLogs = async (
       })
     }
   } catch (e) {
-    // @TODO This needs some re-try logic. If there's a momentary API error,
-    // this will crash the service (intentional for now).
-    console.error('Error reading deployment logs', e)
-    process.exit(1)
+    console.error(`Retrying error in pushDeploymentLogs: ${e}`)
+    console.error((e as any).stack)
+    pushDeploymentLogs(wsClient, vector, deployment, maxRetries - 1)
   }
 }
 
