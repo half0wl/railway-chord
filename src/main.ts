@@ -131,13 +131,13 @@ const runEventLoop = async (
     console.info(`     > projectId=${projectId}`)
     deployments.forEach(async (d) => {
       console.info(`       - deployment=${d.staticUrl}, deploymentId=${d.id}`)
-      pushDeploymentLogs(wsClient, vector, d)
+      pushDeploymentLogs(wsClient, vector, d, new Date())
     })
     plugins.forEach(async (p) => {
       console.info(
         `       - plugin=${p.name}, pluginId=${p.id}, env=${p.environmentName}`,
       )
-      pushPluginLogs(wsClient, vector, p)
+      pushPluginLogs(wsClient, vector, p, new Date())
     })
   })
 }
