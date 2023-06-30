@@ -9,15 +9,15 @@ const LOGTAIL = (token: string) => `
 type = "remap"
 inputs = [ "*" ]
 source = '''
+. = parse_json!(string!(.message))
 .dt = del(.timestamp)
-.railway = del(.railway)
 '''
 
 [sinks.logtail_sink]
 type = "http"
 method = "post"
 inputs = [ "logtail_transform" ]
-uri = "https://in.logtail.com/"
+uri = "https://in.logs.betterstack.com/"
 encoding.codec = "json"
 auth.strategy = "bearer"
 auth.token = "${token}"`
