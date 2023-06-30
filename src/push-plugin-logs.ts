@@ -4,6 +4,7 @@ import write from '@/vector/write'
 import { Client as GqlWsClient } from 'graphql-ws'
 import sleep from '@/utils/sleep'
 
+const MAX_RETRIES = 30
 const RETRY_BACKOFF_MS = 3000
 
 /**
@@ -15,7 +16,7 @@ const pushPluginLogs = async (
   vector: VectorProcess,
   plugin: App.Plugin,
   loopStart: Date,
-  maxRetries = 30,
+  maxRetries = MAX_RETRIES,
 ) => {
   if (maxRetries <= 0) {
     console.error(`Max retries exceeded on pushPluginLogs, crashing!`)
@@ -53,6 +54,7 @@ const pushPluginLogs = async (
         }
 
         write(vector, JSON.stringify(out))
+        maxRetries = MAX_RETRIES
       })
     }
   } catch (e) {
