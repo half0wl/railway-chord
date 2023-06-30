@@ -4,6 +4,7 @@ import write from '@/vector/write'
 import { Client as GqlWsClient } from 'graphql-ws'
 import sleep from '@/utils/sleep'
 
+const MAX_RETRIES = 30
 const RETRY_BACKOFF_MS = 3000
 
 /**
@@ -15,7 +16,7 @@ const pushDeploymentLogs = async (
   vector: VectorProcess,
   deployment: App.Deployment,
   loopStart: Date,
-  maxRetries = 30,
+  maxRetries = MAX_RETRIES,
 ) => {
   if (maxRetries <= 0) {
     console.error(`Max retries exceeded on pushDeploymentLogs, crashing!`)
@@ -35,6 +36,8 @@ const pushDeploymentLogs = async (
           return
         }
 
+        console.log('💓')
+
         const out = {
           message,
           severity,
@@ -48,6 +51,7 @@ const pushDeploymentLogs = async (
         }
 
         write(vector, JSON.stringify(out))
+        maxRetries = MAX_RETRIES
       })
     }
   } catch (e) {

@@ -23,6 +23,7 @@
     "dotenv": "^16.0.3",
     "graphql": "^16.6.0",
     "graphql-ws": "^5.12.0",
+    "reconnecting-websocket": "^4.4.0",
     "tmp": "^0.2.1",
     "ws": "^8.13.0"
   }

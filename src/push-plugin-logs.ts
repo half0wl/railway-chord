@@ -4,6 +4,7 @@ import write from '@/vector/write'
 import { Client as GqlWsClient } from 'graphql-ws'
 import sleep from '@/utils/sleep'
 
+const MAX_RETRIES = 30
 const RETRY_BACKOFF_MS = 3000
 
 /**
@@ -15,7 +16,7 @@ const pushPluginLogs = async (
   vector: VectorProcess,
   plugin: App.Plugin,
   loopStart: Date,
-  maxRetries = 30,
+  maxRetries = MAX_RETRIES,
 ) => {
   if (maxRetries <= 0) {
     console.error(`Max retries exceeded on pushPluginLogs, crashing!`)
@@ -28,24 +29,32 @@ const pushPluginLogs = async (
       plugin.environmentId,
     )) {
       result.data?.pluginLogs.forEach((log) => {
+        const { message, severity, timestamp } = log
+
         // This hacks around Railway's API returning ALL logs at start of
         // stream by only pushing logs from when our event loop starts
         if (loopStart > new Date(log.timestamp)) {
           return
         }
 
+        console.log('💓')
+
         const out = {
+          message,
+          severity,
+          timestamp,
           railway: {
             type: 'PLUGIN',
+            ...log.tags,
             pluginName: plugin.name,
             pluginId: plugin.id,
             environmentId: plugin.environmentId,
             environmentName: plugin.environmentName,
           },
-          ...log,
         }
 
         write(vector, JSON.stringify(out))
+        maxRetries = MAX_RETRIES
       })
     }
   } catch (e) {
