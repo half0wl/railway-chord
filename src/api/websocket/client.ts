@@ -1,5 +1,9 @@
 import { WsClient } from '@/types'
 import { createClient } from 'graphql-ws'
+import ReconnectingWebSocket, {
+  UrlProvider,
+  Options as ReconnectionOptions,
+} from 'reconnecting-websocket'
 import WebSocket from 'ws'
 
 /**
@@ -17,9 +21,23 @@ const createWsClient = (endpoint: string, apiToken: string): WsClient => {
       })
     }
   }
+  class AuthenticatedReconnectingWebSocket extends ReconnectingWebSocket {
+    constructor(
+      url: UrlProvider,
+      protocols?: string | string[],
+      options?: ReconnectionOptions,
+    ) {
+      super(url, protocols, {
+        WebSocket: AuthenticatedWebSocket,
+        connectionTimeout: 3000,
+        maxRetries: 30,
+        ...options,
+      })
+    }
+  }
   return createClient({
     url: endpoint,
-    webSocketImpl: AuthenticatedWebSocket,
+    webSocketImpl: AuthenticatedReconnectingWebSocket,
   })
 }
 
