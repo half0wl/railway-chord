@@ -28,6 +28,8 @@ const pushPluginLogs = async (
       plugin.environmentId,
     )) {
       result.data?.pluginLogs.forEach((log) => {
+        const { message, severity, timestamp } = log
+
         // This hacks around Railway's API returning ALL logs at start of
         // stream by only pushing logs from when our event loop starts
         if (loopStart > new Date(log.timestamp)) {
@@ -35,14 +37,17 @@ const pushPluginLogs = async (
         }
 
         const out = {
+          message,
+          severity,
+          timestamp,
           railway: {
             type: 'PLUGIN',
+            ...log.tags,
             pluginName: plugin.name,
             pluginId: plugin.id,
             environmentId: plugin.environmentId,
             environmentName: plugin.environmentName,
           },
-          ...log,
         }
 
         write(vector, JSON.stringify(out))
