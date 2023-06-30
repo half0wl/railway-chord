@@ -27,7 +27,6 @@ const pushDeploymentLogs = async (
       deployment.id,
     )) {
       result.data?.deploymentLogs.forEach((log) => {
-        console.log('💓')
         const { message, severity, timestamp } = log
 
         // This hacks around Railway's API returning ALL logs at start of
@@ -35,6 +34,8 @@ const pushDeploymentLogs = async (
         if (loopStart > new Date(timestamp)) {
           return
         }
+
+        console.log('💓')
 
         const out = {
           message,

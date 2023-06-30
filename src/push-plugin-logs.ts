@@ -28,7 +28,6 @@ const pushPluginLogs = async (
       plugin.environmentId,
     )) {
       result.data?.pluginLogs.forEach((log) => {
-        console.log('💓')
         const { message, severity, timestamp } = log
 
         // This hacks around Railway's API returning ALL logs at start of
@@ -36,6 +35,8 @@ const pushPluginLogs = async (
         if (loopStart > new Date(log.timestamp)) {
           return
         }
+
+        console.log('💓')
 
         const out = {
           message,
